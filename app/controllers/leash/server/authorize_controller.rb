@@ -1,7 +1,7 @@
 class Leash::Server::AuthorizeController < Leash::ServerController
   ROLES            = [ "editor" ].freeze
   RESPONSE_TYPES   = [ "token" ].freeze
-  CLIENT_ID_REGEXP = /\AOAUTH\_([A-Z0-9\_]+)\_CLIENT\_ID\z/.freeze
+  CLIENT_ID_REGEXP = /\AAPP\_([A-Z0-9\_]+)\_CLIENT\_ID\z/.freeze
   MAX_TRIES        = 20
 
   before_filter :determine_client_id!
