@@ -4,7 +4,7 @@ Leash.configure do |config|
   ## Allowed user classes. Please create devise models with such names first.
   ## None by default so you have to set it to something meaningful in order
   ## to use Leash.  
-  config.user_classes = [ "User", "Admin" ]
+  config.user_roles = [ "User", "Admin" ]
 
 
   ### ==> Redis

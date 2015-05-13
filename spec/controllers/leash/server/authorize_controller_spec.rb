@@ -5,28 +5,30 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
     @OLD_ENV = ENV
     ENV["APP_TEST_CLIENT_ID"] = "123456"
     ENV["APP_TEST_REDIRECT_URL"] = "http://example.com"
+    
+    Leash.user_roles = [ valid_user_role ]
   end
 
   after do
     (ENV.keys - @OLD_ENV.keys).each{ |key| ENV.delete(key) }
   end
 
-  let(:valid_role)           { "editor" }
+  let(:valid_user_role)      { "Editor" }
   let(:valid_client_id)      { ENV["APP_TEST_CLIENT_ID"] }
   let(:valid_redirect_uri)   { ENV["APP_TEST_REDIRECT_URL"] }
-  let(:invalid_role)         { "ufo" }
+  let(:invalid_user_role)    { "Ufo" }
   let(:invalid_client_id)    { "098765" }
   let(:invalid_redirect_uri) { "http://whatever.com" }
 
 
   describe "GET authorize" do
-    context "for token flow" do
+    context "for implicit flow" do
       let(:response_type) { "token" }
 
       pending "without all necessary params"
 
       context "with all necessary params" do
-        let(:params) { { role: role, response_type: response_type, client_id: client_id, redirect_uri: redirect_uri } }
+        let(:params) { { user_role: user_role, response_type: response_type, client_id: client_id, redirect_uri: redirect_uri } }
       
         context "with invalid client_id" do
           let(:client_id) { invalid_client_id }
@@ -34,8 +36,8 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
           context "with valid redirect_uri" do
             let(:redirect_uri) { valid_redirect_uri }
 
-            context "with valid role" do
-              let(:role) { valid_role }
+            context "with valid user role" do
+              let(:user_role) { valid_user_role }
 
               before do
                 get :authorize, params
@@ -45,8 +47,8 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
                 expect(response.status).to eq 422
               end
 
-              it "should return 'Unknown client ID' in the response" do
-                expect(response.body).to eq "Unknown client ID"
+              it "should return 'unknown_client_id' in the response" do
+                expect(response.body).to eq "unknown_client_id"
               end
             end
           end
@@ -58,8 +60,8 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
           context "with invalid redirect_uri" do
             let(:redirect_uri) { invalid_redirect_uri }
 
-            context "with valid role" do
-              let(:role) { valid_role }
+            context "with valid user role" do
+              let(:user_role) { valid_user_role }
 
               before do
                 get :authorize, params
@@ -74,20 +76,20 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
           context "with valid redirect_uri" do
             let(:redirect_uri) { valid_redirect_uri }
 
-            context "but with unknown role" do
-              let(:role) { invalid_role }
+            context "but with unknown user_role" do
+              let(:user_role) { invalid_user_role }
 
               before do
                 get :authorize, params
               end
 
-              it "should redirect to the redirect_uri specified in the app with appended '#error=invalid_role'" do
-                expect(response).to redirect_to("#{valid_redirect_uri}#error=invalid_role")
+              it "should redirect to the redirect_uri specified in the app with appended '#error=invalid_user_role'" do
+                expect(response).to redirect_to("#{valid_redirect_uri}#error=invalid_user_role")
               end
             end  
 
-            context "with valid role" do
-              let(:role) { valid_role }
+            context "with valid user role" do
+              let(:user_role) { valid_user_role }
 
               before do
                 get :authorize, params
@@ -95,7 +97,7 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
 
 
               context "if not authenticated" do
-                pending "it should redirect to devise login screen for this role"
+                pending "it should redirect to devise login screen for this user_role"
               end
 
 

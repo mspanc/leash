@@ -16,7 +16,7 @@ class Leash::ServerController < LeashController
     if $1
       env_name = $1.dup
       @app_name = env_name.gsub("_", "-").downcase
-      @redirect_url = ENV["OAUTH_#{env_name}_REDIRECT_URL"]
+      @redirect_url = ENV["APP_#{env_name}_REDIRECT_URL"]
 
       if @redirect_url
         if @redirect_url != params[:redirect_uri]

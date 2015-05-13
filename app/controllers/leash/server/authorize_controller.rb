@@ -2,7 +2,7 @@ class Leash::Server::AuthorizeController < Leash::ServerController
   RESPONSE_TYPES   = [ "token", "code" ].freeze
 
   before_action :determine_response_type!
-  before_action :determine_role!
+  before_action :determine_user_role!
   before_action :authenticate_user_by_role!
 
 
@@ -31,23 +31,24 @@ class Leash::Server::AuthorizeController < Leash::ServerController
   def callback_with_error(error_code, message)
     Rails.logger.warn "[Leash::Server] Authorize error: #{error_code} (#{message})"
     if @redirect_url
-      redirect_to @redirect_url + "#error=invalid_role"
+      redirect_to @redirect_url + "#error=#{error_code}"
     else
       render text: error_code, status: :unprocessable_entity
     end
   end
 
 
-  def determine_role!
-    params.require("role")
+  def determine_user_role!
+    params.require("user_role")
 
-    fail "Leash.user_classes must be an array" unless Leash.user_classes.is_a? Array
-    if Leash.user_classes.include? params[:role].to_s
-      @role_class = params[:role].constantize
-      @role_name_underscored = params[:role].underscore.gsub("/", "_")
+    fail "Leash.user_roles must be an array" unless Leash.user_roles.is_a? Array
+
+    if Leash.user_roles.include? params[:user_role].to_s
+      @role_class = params[:user_role].constantize
+      @role_name_underscored = params[:user_role].underscore.gsub("/", "_")
 
     else
-      callback_with_error "invalid_role", "Authorize error: Unknown role of '#{params[:role]}'"
+      callback_with_error "invalid_user_role", "Authorize error: Unknown role of '#{params[:user_role]}'"
     end
   end
 
