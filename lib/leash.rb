@@ -1,3 +1,4 @@
+require "rails"
 require "ohm"
 require "leash/version"
 require "leash/engine"

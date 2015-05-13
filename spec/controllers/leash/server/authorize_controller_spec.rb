@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
   before do

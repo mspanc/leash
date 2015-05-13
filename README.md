@@ -24,6 +24,18 @@ Potential use cases are:
 * As such app can be a subject of high load, let's use redis as a backend.
 * Do not reinvent the wheel, let's use devise for authentication.
 
+## Supported OAuth flows
+
+* Implicit (for browser-based or mobile apps)
+
+## Unsupported features
+
+At the moment, Leash does not support:
+
+* Any other flows than mentioned above.
+* Scopes.
+* Token refreshing and invalidation.
+
 ## Status
 
 Work in progress. Early stage of development.

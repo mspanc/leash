@@ -1,77 +1,39 @@
 class Leash::Server::AuthorizeController < Leash::ServerController
-  RESPONSE_TYPES   = [ "token" ].freeze
-  CLIENT_ID_REGEXP = /\AAPP\_([A-Z0-9\_]+)\_CLIENT\_ID\z/.freeze
-  MAX_TRIES        = 20
+  RESPONSE_TYPES   = [ "token", "code" ].freeze
 
-  before_action :determine_client_id!
+  before_action :determine_response_type!
   before_action :determine_role!
   before_action :authenticate_user_by_role!
 
 
   def authorize
-    params.require("response_type")
-    params.require("redirect_uri")
-    
+    owner = "#{@role_class.name}##{send("current_#{@role_name_underscored}").id}"
 
-    if RESPONSE_TYPES.include? params[:response_type]
-      response_type = params[:response_type]
-    else
-      Rails.logger.warn "[Leash::Server] Authorize error: Unknown response type of '#{params[:response_type]}'"
-      render text: "Unknown response type", status: :unprocessable_entity
+    case @response_type
+    when "token"
+      access_token = Leash::AccessToken.assign! @app_name, owner
+  
+      Rails.logger.info "[Leash::Server] Authorize ok: response_type=#{@response_type} app_name=#{@app_name} owner=#{owner} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      redirect_to @redirect_url + "#access_token=#{URI.encode(access_token)}"
+
+    when "code"
+      auth_code = Leash::AuthCode.assign! @app_name, owner
+  
+      Rails.logger.info "[Leash::Server] Authorize ok: response_type=#{@response_type} owner=#{owner} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      redirect_to @redirect_url + "?code=#{URI.encode(auth_code)}"
     end
-
-
-    token = nil
-    tries = 0
-    user_id = send("current_#{@role}").id
-
-    loop do
-      begin
-        token = SecureRandom.hex(24)
-        timestamp = Time.now.to_i
-        Leash::AccessToken.create app_name: @app_name, owner: "#{@role}##{user_id}", token: token, created_at: timestamp, accessed_at: timestamp
-        break
-      
-      rescue Ohm::UniqueIndexViolation => e
-        tries += 1
-
-        fail if tries > MAX_TRIES
-      end
-    end
-
-    Rails.logger.info "[Leash::Server] Authorize ok: app_name=#{@app_name} user_role=#{@role} user_id=#{user_id} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
-    redirect_to @redirect_url + "#access_token=#{URI.encode(token)}"
   end
 
 
+  protected
 
-  private
 
-  def determine_client_id!
-    params.require("client_id")
-
-    # FIXME can be suboptimal but for now let it be
-    # Env vars simplicity FTW!
-    ENV.find{ |k,v| k =~ CLIENT_ID_REGEXP and v == params[:client_id] }
-    
-    if $1
-      env_name = $1.dup
-      @app_name = env_name.gsub("_", "-").downcase
-      @redirect_url = ENV["OAUTH_#{env_name}_REDIRECT_URL"]
-
-      if @redirect_url
-        if @redirect_url != params[:redirect_uri]
-          Rails.logger.warn "[Leash::Server] Authorize error: Redirect URL mismatch (should be '#{@redirect_url}', given '#{params[:redirect_uri]}'"
-          redirect_to @redirect_url + "#error=invalid_redirect_uri"
-        end      
-      else
-        Rails.logger.warn "[Leash::Server] Authorize error: Unable to find redirect URL associated with app '#{app_name}'"
-        render text: "Internal error: Unable to find redirect URL associated with app '#{app_name}'", status: :internal_server_error
-      end
-
+  def callback_with_error(error_code, message)
+    Rails.logger.warn "[Leash::Server] Authorize error: #{error_code} (#{message})"
+    if @redirect_url
+      redirect_to @redirect_url + "#error=invalid_role"
     else
-      Rails.logger.warn "[Leash::Server] Authorize error: Unknown client ID '#{params[:client_id]}'"
-      render text: "Unknown client ID", status: :unprocessable_entity
+      render text: error_code, status: :unprocessable_entity
     end
   end
 
@@ -81,16 +43,27 @@ class Leash::Server::AuthorizeController < Leash::ServerController
 
     fail "Leash.user_classes must be an array" unless Leash.user_classes.is_a? Array
     if Leash.user_classes.include? params[:role].to_s
-      @role = params[:role]
-    else
-      Rails.logger.warn "[Leash::Server] Authorize error: Unknown role of '#{params[:role]}'"
+      @role_class = params[:role].constantize
+      @role_name_underscored = params[:role].underscore.gsub("/", "_")
 
-      redirect_to @redirect_url + "#error=invalid_role"
+    else
+      callback_with_error "invalid_role", "Authorize error: Unknown role of '#{params[:role]}'"
+    end
+  end
+
+
+  def determine_response_type!
+    params.require("response_type")
+
+    if RESPONSE_TYPES.include? params[:response_type]
+      @response_type = params[:response_type]
+    else
+      callback_with_error "unknown_response_type", "Unknown response type of '#{params[:response_type]}'"
     end
   end
 
 
   def authenticate_user_by_role!
-    send "authenticate_#{@role.underscore.gsub("/", "_")}!"
+    send "authenticate_#{@role_name_underscored}!"
   end
 end
