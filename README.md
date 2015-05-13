@@ -26,8 +26,9 @@ Potential use cases are:
 * As such app can be a subject of high load, let's use redis as a backend.
 * Do not reinvent the wheel, let's use devise for authentication.
 
-## Supported OAuth flows
+## Supported OAuth 2 flows
 
+* Authorization Code (for apps running on a web server)
 * Implicit (for browser-based or mobile apps)
 
 ## Unsupported features
