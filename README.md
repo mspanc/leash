@@ -1,6 +1,6 @@
 # Leash
 
-High-performance OAuth2 provider for a closed set of trusted apps with multiple roles support.
+High-performance Ruby on Rails OAuth2 provider for a closed set of trusted apps with multiple roles support.
 
 ## Use cases
 
@@ -22,6 +22,7 @@ Potential use cases are:
 * As the app list is fixed, let's store their credentials in ENV. Fast, easy to maintain and compatible with 12factor.
 * As tokens are not very persistent, let's use redis for storing them.
 * As such app can be a subject of high load, let's use redis as a backend.
+* Do not reinvent the wheel, let's use devise for authentication.
 
 ## Status
 
