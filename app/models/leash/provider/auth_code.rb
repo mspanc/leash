@@ -41,4 +41,11 @@ class Leash::Provider::AuthCode < Ohm::Model
   def self.find_by_auth_code(auth_code)
     self.find(auth_code: auth_code).first
   end
+
+
+  def owner_instance
+    owner_klass, owner_id = owner.split("#", 2)
+
+    owner_klass.classify.constantize.find(owner_id)
+  end  
 end

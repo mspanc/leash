@@ -65,4 +65,11 @@ class Leash::Provider::AccessToken < Ohm::Model
       owner
     end
   end
+
+
+  def owner_instance
+    owner_klass, owner_id = owner.split("#", 2)
+
+    owner_klass.classify.constantize.find(owner_id)
+  end
 end
