@@ -1,1 +1,3 @@
 /.ruby-version
+*.sqlite
+/spec/internal/log/

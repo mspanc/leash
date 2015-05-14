@@ -19,4 +19,10 @@ Leash.configure do |config|
   ## Leash.establish_connection!
   # config.redis_url = "redis://127.0.0.1:6379/0"
 
+
+  ### ==> Access tokens
+  ## Tells whether leash should reuse access tokens if there is already one
+  ## present for application/owner combination. True by default.
+  # config.reuse_access_tokens = true
+
 end

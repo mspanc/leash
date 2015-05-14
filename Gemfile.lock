@@ -60,6 +60,11 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     erubis (2.7.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
     hiredis (0.6.0)
@@ -137,6 +142,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    sqlite3 (1.3.10)
     stal (0.1.0)
       redic
     thor (0.19.1)
@@ -152,6 +158,8 @@ PLATFORMS
 DEPENDENCIES
   bundler
   combustion (~> 0.5.3)
+  factory_girl_rails (~> 4.0)
   leash!
   rake
   rspec-rails
+  sqlite3

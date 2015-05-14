@@ -1,3 +1,5 @@
 Rails.application.routes.draw do
-  leash_server
+  leash
+
+  devise_for :admins
 end

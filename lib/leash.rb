@@ -1,4 +1,5 @@
 require "rails"
+require "devise"
 require "ohm"
 require "leash/version"
 require "leash/engine"
@@ -10,6 +11,10 @@ module Leash
 
   mattr_accessor :redis_url
   @@redis_url = "redis://127.0.0.1:6379/0"
+
+
+  mattr_accessor :reuse_access_tokens
+  @@reuse_access_tokens = true
 
 
   def self.configure
