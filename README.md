@@ -39,6 +39,10 @@ At the moment, Leash does not support:
 * Scopes.
 * Token refreshing and invalidation.
 
+## Compatible ruby version
+
+* Leash is tested with ruby 2.2.1.
+
 ## Status
 
 Work in progress. Early stage of development.
