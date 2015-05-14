@@ -24,13 +24,13 @@ class Leash::Provider::AuthorizeController < Leash::ProviderController
         access_token = Leash::Provider::AccessToken.assign! @app_name, current_owner
       end
 
-      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} app_name=#{@app_name} current_owner=#{current_owner} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} app_name=#{@app_name} current_owner=#{current_owner.class.name}##{current_owner.id} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
       redirect_to params[:redirect_uri] + "#access_token=#{URI.encode(access_token)}"
 
     when "code"
       auth_code = Leash::Provider::AuthCode.assign! @app_name, current_owner
   
-      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner.class.name}##{current_owner.id} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
       redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}"
 
     else
