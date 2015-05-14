@@ -1,6 +1,6 @@
 # leash-provider
 
-[![Build Status](https://travis-ci.org/mspanc/leash.svg?branch=master)](https://travis-ci.org/mspanc/leash)
+[![Build Status](https://travis-ci.org/mspanc/leash-provider.svg?branch=master)](https://travis-ci.org/mspanc/leash)
 
 High-performance Ruby on Rails OAuth2 provider for a closed set of trusted apps with multiple roles support.
 
