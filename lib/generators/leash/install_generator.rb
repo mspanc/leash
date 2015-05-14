@@ -10,6 +10,11 @@ module Leash
       def copy_initializer
         template "leash.rb", "config/initializers/leash.rb"
       end
+
+
+      def add_route
+        route "leash"
+      end
     end
   end
 end
