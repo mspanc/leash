@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    leash (0.0.1)
+    leash_provider (0.0.1)
       devise
       ohm
-      rails (~> 4.2.1)
+      rails (~> 4.2)
 
 GEM
   remote: https://rubygems.org/
@@ -159,7 +159,7 @@ DEPENDENCIES
   bundler
   combustion (~> 0.5.3)
   factory_girl_rails (~> 4.0)
-  leash!
+  leash_provider!
   rake
   rspec-rails
   sqlite3

@@ -1,13 +1,13 @@
 $:.push File.expand_path("../lib", __FILE__)
 
-require "leash/version"
+require "leash/provider/version"
 
 Gem::Specification.new do |s|
-  s.name        = "leash"
-  s.version     = Leash::VERSION
+  s.name        = "leash_provider"
+  s.version     = Leash::Provider::VERSION
   s.authors     = ["Marcin Lewandowski"]
   s.email       = ["marcin@saepia.net"]
-  s.homepage    = "http://github.com/mspanc/leash"
+  s.homepage    = "http://github.com/mspanc/leash-provider"
   s.summary     = "High-performance OAuth2 provider for a closed set of trusted apps with multiple roles support"
   s.description = "Leash allows you to build an OAuth2 provider for closed set of trusted apps. I can support multiple user types and is designed with high load in mind."
 

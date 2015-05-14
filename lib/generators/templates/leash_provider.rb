@@ -1,4 +1,4 @@
-Leash.configure do |config|
+Leash::Provider.configure do |config|
 
   ### ==> User classes
   ## Allowed user classes. Please create devise models with such names first.

@@ -1,4 +1,4 @@
-class Leash::Server::TokenController < Leash::ServerController
+class Leash::Provider::TokenController < Leash::ProviderController
   GRANT_TYPES = [ "authorization_code" ].freeze
 
   before_action :determine_grant_type!
@@ -12,7 +12,7 @@ class Leash::Server::TokenController < Leash::ServerController
       params.require("code")
 
       if Leash::AuthCode.valid?(params[:code])
-        access_token = Leash::AccessToken.assign_from_auth_code! Leash::AuthCode.find_by_auth_code(params[:code])
+        access_token = Leash::Provider::AccessToken.assign_from_auth_code! Leash::Provider::AuthCode.find_by_auth_code(params[:code])
         
         render json: { access_token: access_token }
       end
@@ -27,7 +27,7 @@ class Leash::Server::TokenController < Leash::ServerController
 
 
   def callback_with_error(error_code, message)
-    Rails.logger.warn "[Leash::Server] Token error: #{error_code} (#{message})"
+    Rails.logger.warn "[Leash::Provider] Token error: #{error_code} (#{message})"
     
     case @grant_type
     when "authorization_code"

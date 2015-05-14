@@ -1,4 +1,4 @@
-class Leash::AccessToken < Ohm::Model
+class Leash::Provider::AccessToken < Ohm::Model
   MAX_ASSIGN_TRIES = 20
 
   attribute :app_name

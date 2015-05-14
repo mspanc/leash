@@ -1,4 +1,6 @@
-class Leash::ServerController < LeashController
+class Leash::ProviderController < LeashController
+  include Devise::Controllers::Helpers
+
   CLIENT_ID_REGEXP = /\AAPP\_([A-Z0-9\_]+)\_OAUTH2\_CLIENT\_ID\z/.freeze
 
   protected

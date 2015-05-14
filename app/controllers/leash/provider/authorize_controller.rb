@@ -1,4 +1,4 @@
-class Leash::Server::AuthorizeController < Leash::ServerController
+class Leash::Provider::AuthorizeController < Leash::ProviderController
   RESPONSE_TYPES   = [ "token", "code" ].freeze
 
   before_action :determine_response_type!
@@ -11,26 +11,26 @@ class Leash::Server::AuthorizeController < Leash::ServerController
   def authorize
     case @response_type
     when "token"
-      if Leash.reuse_access_tokens == true
-        access_token_obj = Leash::AccessToken.find_by_app_name_and_owner @app_name, current_owner
+      if Leash::Provider.reuse_access_tokens == true
+        access_token_obj = Leash::Provider::AccessToken.find_by_app_name_and_owner @app_name, current_owner
 
         if access_token_obj
           access_token = access_token_obj.access_token
         else
-          access_token = Leash::AccessToken.assign! @app_name, current_owner
+          access_token = Leash::Provider::AccessToken.assign! @app_name, current_owner
         end
 
       else
-        access_token = Leash::AccessToken.assign! @app_name, current_owner
+        access_token = Leash::Provider::AccessToken.assign! @app_name, current_owner
       end
 
-      Rails.logger.info "[Leash::Server] Authorize ok: response_type=#{@response_type} app_name=#{@app_name} current_owner=#{current_owner} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} app_name=#{@app_name} current_owner=#{current_owner} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
       redirect_to params[:redirect_uri] + "#access_token=#{URI.encode(access_token)}"
 
     when "code"
-      auth_code = Leash::AuthCode.assign! @app_name, current_owner
+      auth_code = Leash::Provider::AuthCode.assign! @app_name, current_owner
   
-      Rails.logger.info "[Leash::Server] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
       redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}"
 
     else
@@ -43,7 +43,7 @@ class Leash::Server::AuthorizeController < Leash::ServerController
 
 
   def callback_with_error(error_code, message)
-    Rails.logger.warn "[Leash::Server] Authorize error: #{error_code} (#{message})"
+    Rails.logger.warn "[Leash::Provider] Authorize error: #{error_code} (#{message})"
 
     case @response_type
     when "token"
@@ -65,9 +65,7 @@ class Leash::Server::AuthorizeController < Leash::ServerController
   def determine_user_role!
     params.require("user_role")
 
-    fail "Leash.user_roles must be an array" unless Leash.user_roles.is_a? Array
-
-    if Leash.user_roles.include? params[:user_role].to_s
+    if Leash::Provider.user_roles.include? params[:user_role].to_s
       @user_role = params[:user_role]
       @user_role_underscored = params[:user_role].underscore.gsub("/", "_")
 

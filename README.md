@@ -1,4 +1,4 @@
-# Leash
+# leash-provider
 
 [![Build Status](https://travis-ci.org/mspanc/leash.svg?branch=master)](https://travis-ci.org/mspanc/leash)
 

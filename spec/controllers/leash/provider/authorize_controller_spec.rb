@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
+RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
   before do
     @OLD_ENV = ENV
     ENV["APP_TEST_OAUTH2_CLIENT_ID"] = "123456"
     ENV["APP_TEST_OAUTH2_SECRET"] = "qwerty"
     ENV["APP_TEST_OAUTH2_REDIRECT_URL"] = "http://example.com"  # TODO test multiple allowed redirect urls
     
-    Leash.user_roles = [ valid_user_role ]
+    allow(Leash::Provider).to receive(:user_roles).and_return([ valid_user_role ])
   end
 
   after do
@@ -215,11 +215,11 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
                 let(:admin) { create(:admin) }
 
                 context "and there is already an access token for this app_name/owner combination" do
-                  context "and Leash.reuse_access_tokens is set to true" do
+                  context "and Leash::Provider.reuse_access_tokens is set to true" do
                     before do
-                      expect(Leash).to receive(:reuse_access_tokens).and_return(true)
+                      expect(Leash::Provider).to receive(:reuse_access_tokens).and_return(true)
 
-                      @existing_access_token = Leash::AccessToken.assign! app_name, admin
+                      @existing_access_token = Leash::Provider::AccessToken.assign! app_name, admin
 
                       sign_in admin
                       get :authorize, params
@@ -230,11 +230,11 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
                     end
                   end
                   
-                  context "and Leash.reuse_access_tokens is set to false" do
+                  context "and Leash::Provider.reuse_access_tokens is set to false" do
                     before do
-                      expect(Leash).to receive(:reuse_access_tokens).and_return(false)
+                      expect(Leash::Provider).to receive(:reuse_access_tokens).and_return(false)
 
-                      @existing_access_token = Leash::AccessToken.assign! app_name, admin
+                      @existing_access_token = Leash::Provider::AccessToken.assign! app_name, admin
 
                       sign_in admin
                       get :authorize, params
@@ -242,7 +242,7 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
 
                     it "should redirect to the redirect_uri specified in the params with appended '#access_token=(newly generated access token)'" do
                       expect(response).not_to redirect_to("#{valid_redirect_uri}#access_token=#{URI.encode(@existing_access_token)}")
-                      expect(response).to redirect_to("#{valid_redirect_uri}#access_token=#{Leash::AccessToken.find_by_app_name_and_owner(app_name, admin).access_token}")
+                      expect(response).to redirect_to("#{valid_redirect_uri}#access_token=#{Leash::Provider::AccessToken.find_by_app_name_and_owner(app_name, admin).access_token}")
                     end
                   end
                 end
@@ -254,7 +254,7 @@ RSpec.describe Leash::Server::AuthorizeController, :type => :controller do
                   end
 
                   it "should redirect to the redirect_uri specified in the app with appended '#access_token=(newly generated access token)'" do
-                    expect(response).to redirect_to("#{valid_redirect_uri}#access_token=#{URI.encode(Leash::AccessToken.find_by_app_name_and_owner(app_name, admin).access_token)}")
+                    expect(response).to redirect_to("#{valid_redirect_uri}#access_token=#{URI.encode(Leash::Provider::AccessToken.find_by_app_name_and_owner(app_name, admin).access_token)}")
                   end
                 end
               end
