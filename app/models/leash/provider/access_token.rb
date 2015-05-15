@@ -72,4 +72,9 @@ class Leash::Provider::AccessToken < Ohm::Model
 
     owner_klass.classify.constantize.find(owner_id)
   end
+
+
+  def touch!
+    update accessed_at: Time.now.to_i
+  end
 end
