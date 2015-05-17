@@ -17,7 +17,7 @@ class Leash::Provider::AuthCode < Ohm::Model
 
     loop do
       begin
-        auth_code = SecureRandom.hex(24)
+        auth_code = SecureRandom.base64(32)
         timestamp = Time.now.to_i
         self.create app_name: app_name, owner: owner, auth_code: auth_code, created_at: timestamp
         break
