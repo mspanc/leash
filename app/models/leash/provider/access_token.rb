@@ -20,7 +20,7 @@ class Leash::Provider::AccessToken < Ohm::Model
 
     loop do
       begin
-        access_token = SecureRandom.base64(32)
+        access_token = SecureRandom.base64(32).gsub("=", "_").gsub("&", "-") # = and & can cause confusion in clients
         timestamp = Time.now.to_i
         self.create app_name: app_name, owner: owner_key(owner), access_token: access_token, created_at: timestamp, accessed_at: timestamp
         break
