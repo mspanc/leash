@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Marcin Lewandowski"]
   s.email       = ["marcin@saepia.net"]
   s.homepage    = "http://github.com/mspanc/leash-provider"
-  s.summary     = "High-performance OAuth2 provider for a closed set of trusted apps with multiple roles support"
-  s.description = "Leash allows you to build an OAuth2 provider for closed set of trusted apps. I can support multiple user types and is designed with high load in mind."
+  s.summary     = "High-performance Ruby on Rails OAuth2 provider for a closed set of trusted apps with multiple user roles."
+  s.description = "Leash allows you to build an OAuth2 provider for a closed set of trusted client apps. It can support multiple user roles and is designed to handle high load."
   s.license     = "MIT"
 
   s.add_dependency "rails", "~> 4.2"
