@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/mspanc/leash-provider"
   s.summary     = "High-performance OAuth2 provider for a closed set of trusted apps with multiple roles support"
   s.description = "Leash allows you to build an OAuth2 provider for closed set of trusted apps. I can support multiple user types and is designed with high load in mind."
+  s.license     = "MIT"
 
   s.add_dependency "rails", "~> 4.2"
   s.add_dependency "ohm"
