@@ -19,9 +19,9 @@ class Leash::Provider::AuthCode < Ohm::Model
       begin
         auth_code = SecureRandom.urlsafe_base64(32)
         timestamp = Time.now.to_i
-        self.create app_name: app_name, owner: owner, auth_code: auth_code, created_at: timestamp
+        self.create app_name: app_name, owner: owner_key(owner), auth_code: auth_code, created_at: timestamp
         break
-      
+
       rescue Ohm::UniqueIndexViolation => e
         tries += 1
 
@@ -43,9 +43,18 @@ class Leash::Provider::AuthCode < Ohm::Model
   end
 
 
+  def self.owner_key(owner)
+    if owner.is_a? ActiveRecord::Base
+      "#{owner.class.name}##{owner.id}"
+    else
+      owner
+    end
+  end
+
+
   def owner_instance
     owner_klass, owner_id = owner.split("#", 2)
 
     owner_klass.classify.constantize.find(owner_id)
-  end  
+  end
 end

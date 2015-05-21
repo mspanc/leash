@@ -2,8 +2,6 @@ class Leash::Provider::TokenController < Leash::ProviderController
   GRANT_TYPES = [ "authorization_code" ].freeze
 
   before_action :determine_grant_type!
-  before_action :determine_client_id!
-  before_action :determine_client_secret!
 
 
   def token
@@ -11,10 +9,10 @@ class Leash::Provider::TokenController < Leash::ProviderController
     when "authorization_code"
       params.require("code")
 
-      if Leash::AuthCode.valid?(params[:code])
+      if Leash::Provider::AuthCode.valid?(params[:code])
         access_token = Leash::Provider::AccessToken.assign_from_auth_code! Leash::Provider::AuthCode.find_by_auth_code(params[:code])
-        
-        render json: { access_token: access_token }
+
+        render json: { access_token: access_token, token_type: "bearer" }
       end
 
     else
@@ -28,7 +26,7 @@ class Leash::Provider::TokenController < Leash::ProviderController
 
   def callback_with_error(error_code, message)
     Rails.logger.warn "[Leash::Provider] Token error: #{error_code} (#{message})"
-    
+
     case @grant_type
     when "authorization_code"
       render json: { error: error_code }, status: :unprocessable_entity

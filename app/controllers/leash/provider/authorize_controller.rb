@@ -29,10 +29,16 @@ class Leash::Provider::AuthorizeController < Leash::ProviderController
 
     when "code"
       auth_code = Leash::Provider::AuthCode.assign! @app_name, current_owner
-  
-      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner.class.name}##{current_owner.id} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
-      redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}"
 
+      Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner.class.name}##{current_owner.id} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+
+      if params.has_key? :state
+        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}&state=#{URI.encode(params[:state])}"
+
+      else
+        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}"
+      end
+      
     else
       fail "Should not be reached"
     end
@@ -55,7 +61,7 @@ class Leash::Provider::AuthorizeController < Leash::ProviderController
 
     when "code"
       render text: error_code, status: :unprocessable_entity
-    
+
     else
       fail "Should not be reached"
     end

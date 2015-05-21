@@ -1,6 +1,6 @@
 class Leash::ProviderController < LeashController
   include Devise::Controllers::Helpers
-
+  
   CLIENT_ID_REGEXP = /\AAPP\_([A-Z0-9\_]+)\_OAUTH2\_CLIENT\_ID\z/.freeze
 
   protected
@@ -36,7 +36,7 @@ class Leash::ProviderController < LeashController
       unless @redirect_urls.include? params[:redirect_uri]
         callback_with_error "invalid_redirect_uri", "Redirect URL mismatch (should be '#{@redirect_url}', given '#{params[:redirect_uri]}'"
       end
-    
+
     else
       callback_with_error "unknown_redirect_uri", "Unable to find redirect URL associated with app '#{@app_name}'"
     end
@@ -50,7 +50,7 @@ class Leash::ProviderController < LeashController
     if @client_secret
       unless @client_secret == params[:client_secret]
         callback_with_error "invalid_secret", "Secret mismatch"
-      end      
+      end
     else
       callback_with_error "unknown_secret", "Unable to find secret associated with app '#{@app_name}'"
     end
