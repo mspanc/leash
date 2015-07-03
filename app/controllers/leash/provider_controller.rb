@@ -32,13 +32,41 @@ class Leash::ProviderController < LeashController
 
     @redirect_url = ENV["APP_#{@env_name}_OAUTH2_REDIRECT_URL"]
     if @redirect_url and not @redirect_url.blank?
-      @redirect_urls = @redirect_url.split(" ")
-      unless @redirect_urls.include? params[:redirect_uri]
-        callback_with_error "invalid_redirect_uri", "Redirect URL mismatch (should be '#{@redirect_url}', given '#{params[:redirect_uri]}'"
+      begin
+        redirect_uri_parsed = URI.parse(params[:redirect_uri])
+      rescue URI::InvalidURIError => e
+        callback_with_error "invalid_redirect_uri", "Redirect URL has invalid syntax, given '#{params[:redirect_uri]}'"
+        return
       end
 
+      unless redirect_uri_parsed.fragment.blank?
+        callback_with_error "invalid_redirect_uri", "Redirect URL contains fragment, given '#{params[:redirect_uri]}'"
+        return
+      end
+
+      @redirect_urls = @redirect_url.split(" ")
+    
+      @redirect_urls.each do |known_redirect_url|
+        if known_redirect_url.ends_with? "*"
+          if known_redirect_url.starts_with? params[:redirect_uri]
+            # Found!
+            return
+          end
+
+        else 
+          if known_redirect_url == params[:redirect_uri]
+            # Found!
+            return
+          end
+        end
+      end
+
+      callback_with_error "unknown_redirect_uri", "Redirect URL mismatch (should be one of '#{@redirect_url}', given '#{params[:redirect_uri]}'"
+      return
+      
     else
-      callback_with_error "unknown_redirect_uri", "Unable to find redirect URL associated with app '#{@app_name}'"
+      callback_with_error "configuration_error", "Unable to find redirect URLs associated with app '#{@app_name}'"
+      return
     end
   end
 
@@ -49,10 +77,10 @@ class Leash::ProviderController < LeashController
     @client_secret = ENV["APP_#{@env_name}_OAUTH2_SECRET"]
     if @client_secret
       unless @client_secret == params[:client_secret]
-        callback_with_error "invalid_secret", "Secret mismatch"
+        callback_with_error "unknown_secret", "Secret mismatch"
       end
     else
-      callback_with_error "unknown_secret", "Unable to find secret associated with app '#{@app_name}'"
+      callback_with_error "configuration_error", "Unable to find secret associated with app '#{@app_name}'"
     end
   end
 
