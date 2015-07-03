@@ -261,12 +261,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   get :authorize, params
                 end
 
-                it "should return 422 status" do
-                  expect(response.status).to eq 422
-                end
-
-                it "should return 'invalid_redirect_uri' in the response" do
-                  expect(response.body).to eq "invalid_redirect_uri"
+                it "should redirect to the first redirect_uri specified in the app with appended '#error=invalid_redirect_uri'" do
+                  expect(response).to redirect_to("#{valid_redirect_uri}#error=invalid_redirect_uri")
                 end
               end
             end
@@ -282,12 +278,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   get :authorize, params
                 end
 
-                it "should return 422 status" do
-                  expect(response.status).to eq 422
-                end
-
-                it "should return 'invalid_redirect_uri' in the response" do
-                  expect(response.body).to eq "invalid_redirect_uri"
+                it "should redirect to the first redirect_uri specified in the app with appended '#error=invalid_redirect_uri'" do
+                  expect(response).to redirect_to("#{valid_redirect_uri}#error=invalid_redirect_uri")
                 end
               end
             end
@@ -303,12 +295,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   get :authorize, params
                 end
 
-                it "should return 422 status" do
-                  expect(response.status).to eq 422
-                end
-
-                it "should return 'invalid_redirect_uri' in the response" do
-                  expect(response.body).to eq "invalid_redirect_uri"
+                it "should redirect to the first redirect_uri specified in the app with appended '#error=invalid_redirect_uri'" do
+                  expect(response).to redirect_to("#{valid_redirect_uri}#error=invalid_redirect_uri")
                 end
               end
             end
