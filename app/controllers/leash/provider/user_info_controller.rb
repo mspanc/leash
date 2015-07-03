@@ -11,14 +11,16 @@ class Leash::Provider::UserInfoController < Leash::ProviderController
     owner = access_token.owner_instance
 
     if owner.respond_to? :for_leash_provider
-      data = owner.for_leash_provider
+      data = owner.for_leash_provider.as_json
     else
-      data = owner
+      data = owner.as_json
     end
+
+    full_data = { owner.class.name => data }
 
     respond_to do |format|
       format.json do
-        render json: data
+        render json: full_data
       end
     end
   end
