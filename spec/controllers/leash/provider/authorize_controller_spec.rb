@@ -99,8 +99,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   expect(response.status).to eq 422
                 end
 
-                it "should return 'unknown_user_role' in the response" do
-                  expect(response.body).to eq "unknown_user_role"
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
                 end
               end
             end
@@ -120,8 +120,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   expect(response.status).to eq 422
                 end
 
-                it "should return 'unknown_user_role' in the response" do
-                  expect(response.body).to eq "unknown_user_role"
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
                 end
               end
             end
@@ -141,8 +141,8 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
                   expect(response.status).to eq 422
                 end
 
-                it "should return 'unknown_user_role' in the response" do
-                  expect(response.body).to eq "unknown_user_role"
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
                 end
               end
             end
@@ -248,6 +248,72 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
               end
             end
           end
+
+          context "with invalid redirect_uri" do
+            context "because it has invalid syntax" do
+              let(:redirect_uri) { invalid_redirect_uri_syntax }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
+                end
+              end
+            end
+
+            context "because it contains an empty fragment" do
+              let(:redirect_uri) { invalid_redirect_uri_fragment_empty }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
+                end
+              end
+            end
+
+            context "because it contains an non-empty fragment" do
+              let(:redirect_uri) { invalid_redirect_uri_fragment_present }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'invalid_redirect_uri' in the response" do
+                  expect(response.body).to eq "invalid_redirect_uri"
+                end
+              end
+            end
+          end
+
 
           context "with valid redirect_uri" do
             let(:redirect_uri) { valid_redirect_uri }
