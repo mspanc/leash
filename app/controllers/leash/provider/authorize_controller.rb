@@ -76,7 +76,7 @@ class Leash::Provider::AuthorizeController < Leash::ProviderController
       @user_role_underscored = params[:user_role].underscore.gsub("/", "_")
 
     else
-      callback_with_error "invalid_user_role", "Authorize error: Unknown role of '#{params[:user_role]}'"
+      callback_with_error "unknown_user_role", "Authorize error: Unknown role of '#{params[:user_role]}'"
     end
   end
 
