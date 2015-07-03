@@ -47,8 +47,8 @@ class Leash::ProviderController < LeashController
       @redirect_urls = @redirect_url.split(" ")
     
       @redirect_urls.each do |known_redirect_url|
-        if known_redirect_url.ends_with? "*"
-          if known_redirect_url.starts_with? params[:redirect_uri]
+        if known_redirect_url.end_with? "*"
+          if params[:redirect_uri].start_with? known_redirect_url[0..-2] 
             # Found!
             return
           end
@@ -59,7 +59,7 @@ class Leash::ProviderController < LeashController
             return
           end
         end
-      end
+      end    
 
       callback_with_error "unknown_redirect_uri", "Redirect URL mismatch (should be one of '#{@redirect_url}', given '#{params[:redirect_uri]}'"
       return
