@@ -20,6 +20,9 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
   let(:valid_redirect_uri)   { ENV["APP_TEST_OAUTH2_REDIRECT_URL"] }
   let(:unknown_user_role)    { "Ufo" }
   let(:unknown_client_id)    { "098765" }
+  let(:invalid_redirect_uri_syntax) { " http://whatever.com" }
+  let(:invalid_redirect_uri_fragment_empty) { "http://whatever.com#" }
+  let(:invalid_redirect_uri_fragment_present) { "http://whatever.com#abcd" }
   let(:unknown_redirect_uri) { "http://whatever.com" }
   let(:authentication_route) { new_admin_session_path }
 
@@ -76,6 +79,71 @@ RSpec.describe Leash::Provider::AuthorizeController, :type => :controller do
 
               it "should return 'unknown_redirect_uri' in the response" do
                 expect(response.body).to eq "unknown_redirect_uri"
+              end
+            end
+          end
+
+          context "with invalid redirect_uri" do
+            context "because it has invalid syntax" do
+              let(:redirect_uri) { invalid_redirect_uri_syntax }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'unknown_user_role' in the response" do
+                  expect(response.body).to eq "unknown_user_role"
+                end
+              end
+            end
+
+            context "because it contains an empty fragment" do
+              let(:redirect_uri) { invalid_redirect_uri_fragment_empty }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'unknown_user_role' in the response" do
+                  expect(response.body).to eq "unknown_user_role"
+                end
+              end
+            end
+
+            context "because it contains an non-empty fragment" do
+              let(:redirect_uri) { invalid_redirect_uri_fragment_present }
+
+              context "with valid user role" do
+                let(:user_role) { valid_user_role }
+
+
+                before do
+                  get :authorize, params
+                end
+
+                it "should return 422 status" do
+                  expect(response.status).to eq 422
+                end
+
+                it "should return 'unknown_user_role' in the response" do
+                  expect(response.body).to eq "unknown_user_role"
+                end
               end
             end
           end

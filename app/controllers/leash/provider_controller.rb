@@ -39,7 +39,7 @@ class Leash::ProviderController < LeashController
         return
       end
 
-      unless redirect_uri_parsed.fragment.blank?
+      unless redirect_uri_parsed.fragment.nil?
         callback_with_error "invalid_redirect_uri", "Redirect URL contains fragment, given '#{params[:redirect_uri]}'"
         return
       end
