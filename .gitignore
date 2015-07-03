@@ -2,3 +2,4 @@
 *.sqlite
 /spec/internal/log/
 *.gem
+Gemfile.lock

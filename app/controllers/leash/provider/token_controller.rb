@@ -11,6 +11,7 @@ class Leash::Provider::TokenController < Leash::ProviderController
 
       if Leash::Provider::AuthCode.valid?(params[:code])
         access_token = Leash::Provider::AccessToken.assign_from_auth_code! Leash::Provider::AuthCode.find_by_auth_code(params[:code])
+        Rails.logger.info "[Leash::Provider] Code<->Token exchange ok: grant_type=#{@grant_type} auth_code=#{params[:code]} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
 
         render json: { access_token: access_token, token_type: "bearer" }
       end
