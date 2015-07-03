@@ -32,6 +32,8 @@ class Leash::ProviderController < LeashController
 
     @redirect_url = ENV["APP_#{@env_name}_OAUTH2_REDIRECT_URL"]
     if @redirect_url and not @redirect_url.blank?
+      @redirect_urls = @redirect_url.split(" ")
+
       begin
         redirect_uri_parsed = URI.parse(params[:redirect_uri])
       rescue URI::InvalidURIError => e
@@ -44,7 +46,6 @@ class Leash::ProviderController < LeashController
         return
       end
 
-      @redirect_urls = @redirect_url.split(" ")
     
       @redirect_urls.each do |known_redirect_url|
         if known_redirect_url.end_with? "*"
