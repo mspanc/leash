@@ -18,6 +18,8 @@ class Leash::Provider::UserInfoController < Leash::ProviderController
 
     full_data = { owner.class.name => data }
 
+    Rails.logger.info "[Leash::Provider] User info ok: access_token=#{access_token_raw} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+
     respond_to do |format|
       format.json do
         render json: full_data
