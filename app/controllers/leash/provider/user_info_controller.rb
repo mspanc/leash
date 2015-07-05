@@ -1,7 +1,7 @@
 class Leash::Provider::UserInfoController < Leash::ProviderController
   def info
     render text: "missing_authorization_header", status: :unauthorized unless request.headers["Authorization"]
-    render text: "missing_authorization_bearer", status: :unauthorized unless request.headers["Authorization"].starts_with? "Bearer "
+    render text: "missing_authorization_bearer", status: :unauthorized unless request.headers["Authorization"].start_with? "Bearer "
 
     access_token_raw = request.headers["Authorization"].split(" ", 2).last
 
