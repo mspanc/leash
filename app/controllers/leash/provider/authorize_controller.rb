@@ -29,15 +29,15 @@ class Leash::Provider::AuthorizeController < Leash::ProviderController
       redirect_to params[:redirect_uri] + "#access_token=#{URI.encode(access_token)}"
 
     when "code"
-      auth_code = Leash::Provider::AuthCode.assign! @app_name, current_owner
+      auth_code = Leash::Provider::AuthCode.assign! @app_name, current_owner, params[:redirect_uri]
 
       Rails.logger.info "[Leash::Provider] Authorize ok: response_type=#{@response_type} current_owner=#{current_owner.class.name}##{current_owner.id} auth_code=#{auth_code} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
 
       if params.has_key? :state
-        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}&state=#{URI.encode(params[:state])}"
+        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}&state=#{URI.encode(params[:state])}" # FIXME ensure that params are joined correctly
 
       else
-        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}"
+        redirect_to params[:redirect_uri] + "?code=#{URI.encode(auth_code)}" # FIXME ensure that params are joined correctly
       end
       
     else
