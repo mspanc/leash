@@ -1,8 +1,8 @@
 class Leash::Provider::TokenController < Leash::ProviderController
   GRANT_TYPES = [ "authorization_code" ].freeze
 
+  before_action :set_no_cache_headers
   before_action :determine_grant_type!
-
 
   def token
     case @grant_type

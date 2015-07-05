@@ -1,6 +1,7 @@
 class Leash::Provider::AuthorizeController < Leash::ProviderController
   RESPONSE_TYPES   = [ "token", "code" ].freeze
 
+  before_action :set_no_cache_headers
   before_action :determine_response_type!
   before_action :determine_client_id!
   before_action :determine_redirect_url!

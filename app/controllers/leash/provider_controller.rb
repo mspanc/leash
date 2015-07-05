@@ -10,6 +10,12 @@ class Leash::ProviderController < LeashController
   end
 
 
+  def set_no_cache_headers
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+  end
+
+
   def determine_client_id!
     params.require("client_id")
 
