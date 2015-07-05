@@ -9,20 +9,16 @@ class Leash::Provider::TokenController < Leash::ProviderController
     when "authorization_code"
       params.require("code")
 
-      Rails.logger.info "[Leash::Provider] Code<->Token exchange: #{params.inspect}"
-      if Leash::Provider::AuthCode.present?(params[:code])
-        access_token = Leash::Provider::AccessToken.assign_from_auth_code! Leash::Provider::AuthCode.find_by_auth_code(params[:code])
-        
-        if access_token.redirect_uri == params[:redirect_uri]
-          Rails.logger.info "[Leash::Provider] Code<->Token exchange ok: grant_type=#{@grant_type} auth_code=#{params[:code]} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
-          render json: { access_token: access_token, token_type: "bearer" }
-        else
-          callback_with_error "invalid_grant", "Given redirect URI does not match one specified in the authorization request"
-        end
+      # Rails.logger.info "[Leash::Provider] Code<->Token exchange: #{params.inspect}"
+      callback_with_error "invalid_grant", "Given auth code does not exist" and return unless Leash::Provider::AuthCode.present?(params[:code])
 
-      else
-        callback_with_error "invalid_grant", "Given auth code does not exist"
-      end
+      auth_code = Leash::Provider::AuthCode.find_by_auth_code(params[:code])
+      callback_with_error "invalid_grant", "Given redirect URI does not match one specified in the authorization request" and return unless auth_code.redirect_uri == params[:redirect_uri]
+      # TODO if client_id and client_secret is present, try to match it with ENV vars
+
+      access_token = Leash::Provider::AccessToken.assign_from_auth_code! Leash::Provider::AuthCode.find_by_auth_code(params[:code])
+      Rails.logger.info "[Leash::Provider] Code<->Token exchange ok: grant_type=#{@grant_type} auth_code=#{params[:code]} access_token=#{access_token} request_ip=#{request.remote_ip} request_user_agent=#{request.user_agent}"
+      render json: { access_token: access_token, token_type: "bearer" }
 
     else
       fail # Should not be reached
