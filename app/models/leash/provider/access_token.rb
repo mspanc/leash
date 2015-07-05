@@ -43,7 +43,7 @@ class Leash::Provider::AccessToken < Ohm::Model
   end
 
 
-  def self.valid?(access_token)
+  def self.present?(access_token)
     self.find(access_token: access_token).size != 0
   end
 

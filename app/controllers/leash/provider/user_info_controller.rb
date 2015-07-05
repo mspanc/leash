@@ -5,7 +5,7 @@ class Leash::Provider::UserInfoController < Leash::ProviderController
 
     access_token_raw = request.headers["Authorization"].split(" ", 2).last
 
-    render json: { error: "unknown_access_token" }, status: :forbidden and return unless Leash::Provider::AccessToken.valid?(access_token_raw)
+    render json: { error: "unknown_access_token" }, status: :forbidden and return unless Leash::Provider::AccessToken.present?(access_token_raw)
 
     access_token =  Leash::Provider::AccessToken.find_by_access_token(access_token_raw)
     owner = access_token.owner_instance
