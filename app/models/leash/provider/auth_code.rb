@@ -60,4 +60,4 @@ class Leash::Provider::AuthCode < Ohm::Model
   end
 end
 
-::Leash::Provider::AuthToken.redis = Redic.new(::Leash::Provider.redis_url)
+::Leash::Provider::AuthCode.redis = Redic.new(::Leash::Provider.redis_url)
