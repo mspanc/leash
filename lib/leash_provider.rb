@@ -24,7 +24,8 @@ module Leash
 
 
     def self.establish_connection!
-      Ohm.redis = Redic.new(@@redis_url)
+      ::Leash::Provider::AccessToken.redis = Redic.new(@@redis_url)
+      ::Leash::Provider::AuthCode.redis = Redic.new(@@redis_url)
     end
   end
 end

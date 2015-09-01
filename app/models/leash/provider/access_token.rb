@@ -78,3 +78,5 @@ class Leash::Provider::AccessToken < Ohm::Model
     update accessed_at: Time.now.to_i
   end
 end
+
+::Leash::Provider::AccessToken.redis = Redic.new(::Leash::Provider.redis_url)

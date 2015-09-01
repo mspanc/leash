@@ -59,3 +59,5 @@ class Leash::Provider::AuthCode < Ohm::Model
     owner_klass.classify.constantize.find(owner_id)
   end
 end
+
+::Leash::Provider::AuthToken.redis = Redic.new(::Leash::Provider.redis_url)
