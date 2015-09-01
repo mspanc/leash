@@ -20,6 +20,8 @@ module Leash
 
     def self.configure
       yield self
+
+      establish_connection!
     end
 
 
